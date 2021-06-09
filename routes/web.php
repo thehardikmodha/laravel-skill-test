@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,13 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::redirect('/', '/products');
 
-Route::get('/', function () {
-    return view('home');
+Route::group([
+    'prefix' => 'products'
+], function () {
+
+    Route::get('/', [ProductController::class, 'index'])->name('products');
+    Route::post('/', [ProductController::class, 'store'])->name('product-store');
+
 });
