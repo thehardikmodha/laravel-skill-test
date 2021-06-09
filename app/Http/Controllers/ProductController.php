@@ -19,7 +19,31 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('home');
+        return view('product');
+    }
+
+    /**
+     * Product edit view method
+     * @return Application|Factory|View|string
+     */
+    public function editView($id)
+    {
+        $products = $this->getJsonFileArray();
+        $hasProduct = false;
+        $data['product'] = [];
+        foreach ($products as $product) {
+            if ($product['id'] == $id) {
+                $hasProduct = true;
+                $data['product']['id'] = $id;
+                $data['product']['name'] = $product['name'];
+                $data['product']['price'] = $product['price'];
+                $data['product']['quantity'] = $product['quantity'];
+            }
+        }
+        if ($hasProduct)
+            return view('product-edit', $data);
+
+        return redirect()->route('products');
     }
 
     public function list()
@@ -45,22 +69,64 @@ class ProductController extends Controller
                 'message' => $validator->errors()->first()
             ]);
 
-        $old_data = $this->getJsonFileArray();
+        $products = $this->getJsonFileArray();
 
-        if (is_array($old_data)) {
-            $new_record['id'] = count($old_data) + 1;
+        if (is_array($products)) {
+            $new_record['id'] = count($products) + 1;
             $new_record['name'] = request('name');
             $new_record['price'] = request('price');
             $new_record['quantity'] = request('quantity');
 
-            $old_data[] = $new_record;
-            if ($this->setJsonFileArray($old_data)) {
+            $products[] = $new_record;
+            if ($this->setJsonFileArray($products)) {
                 return response()->json([
                     'status' => true,
                     'message' => 'Successfully saved.'
                 ]);
             }
         }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'There was an error please try after sometime.'
+        ]);
+    }
+
+    /**
+     * Product Edit API
+     * @param $id
+     * @return JsonResponse
+     */
+    public function edit($id): JsonResponse
+    {
+        $validator = Validator::make(request()->all(), [
+            'name' => 'required|string',
+            'quantity' => 'required|numeric',
+            'price' => 'required|numeric',
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first()
+            ]);
+
+        $products = $this->getJsonFileArray();
+        $updated = false;
+        foreach ($products as $key => $product) {
+            if ($product['id'] == $id) {
+                $updated = true;
+                $products[$key]['name'] = request('name');
+                $products[$key]['price'] = request('price');
+                $products[$key]['quantity'] = request('quantity');
+            }
+        }
+        if ($updated)
+            if ($this->setJsonFileArray($products))
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Successfully saved.'
+                ]);
 
         return response()->json([
             'status' => false,

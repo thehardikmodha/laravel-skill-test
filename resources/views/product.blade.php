@@ -25,18 +25,18 @@
                 <div class="card-body">
                     <form id="product-form">
                         <div class="mb-3">
-                            <label for="product-name" class="visually-hidden">Product Name</label>
+                            <label for="product-name">Product Name</label>
                             <input type="text" class="form-control" id="product-name" placeholder="Product Name"
                                    name="name"
                                    autofocus>
                         </div>
                         <div class="mb-3">
-                            <label for="quantity-in-stock" class="visually-hidden">Product Quantity (in stock)</label>
+                            <label for="quantity-in-stock">Product Quantity (in stock)</label>
                             <input type="number" class="form-control" id="quantity-in-stock" name="quantity"
                                    placeholder="Product Quantity (In stock)">
                         </div>
                         <div class="mb-3">
-                            <label for="product-price" class="visually-hidden">Product Price (Per item)</label>
+                            <label for="product-price">Product Price (Per item)</label>
                             <input type="number" class="form-control" id="product-price" name="price"
                                    placeholder="Product Price (Per item)">
                         </div>
@@ -59,6 +59,7 @@
                         <th scope="col">Product Quantity</th>
                         <th scope="col">Product Price</th>
                         <th scope="col">Total Value</th>
+                        <th scope="col">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -70,11 +71,6 @@
     </div>
 </div>
 
-
-<!-- Option 1: Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-        crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
@@ -88,8 +84,7 @@
             method: 'GET',
             success: function (data) {
                 $('#product-table tbody').empty();
-                if (data.length > 0)
-                {
+                if (data.length > 0) {
                     for (let i = 0; i < data.length; i++) {
                         const id = data[i].id;
                         const name = data[i].name;
@@ -101,6 +96,9 @@
                             '<td>' + quantity + '</td>' +
                             '<td>$' + price + '</td>' +
                             '<td>$' + (parseInt(price) * parseInt(quantity)) + '</td>' +
+                            '<td>' +
+                            '<a class="btn btn-primary btn-sm" href="/products/edit/' + id + '" role="button">Edit</a>' +
+                            '</td>' +
                             '</tr>');
                     }
                 } else {

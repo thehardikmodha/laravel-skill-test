@@ -21,6 +21,8 @@ Route::group([
 
     Route::get('/', [ProductController::class, 'index'])->name('products');
     Route::get('/products-list', [ProductController::class, 'list'])->name('products-list');
+    Route::get('/edit/{id}', [ProductController::class, 'editView'])->name('product-edit');
+    Route::put('/edit/{id}', [ProductController::class, 'edit'])->name('product-edit-api');
     Route::post('/', [ProductController::class, 'store'])->name('product-store');
 
 });
