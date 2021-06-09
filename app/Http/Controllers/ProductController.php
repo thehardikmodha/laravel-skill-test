@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,10 +22,16 @@ class ProductController extends Controller
         return view('home');
     }
 
+    public function list()
+    {
+        return $this->getJsonFileArray();
+    }
+
     /**
-     *
+     * Store Product
+     * @return JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'name' => 'required|string',
@@ -41,6 +48,7 @@ class ProductController extends Controller
         $old_data = $this->getJsonFileArray();
 
         if (is_array($old_data)) {
+            $new_record['id'] = count($old_data) + 1;
             $new_record['name'] = request('name');
             $new_record['price'] = request('price');
             $new_record['quantity'] = request('quantity');
@@ -67,7 +75,7 @@ class ProductController extends Controller
     private function getJsonFileArray()
     {
         if (Storage::exists($this->json_file_name)) {
-            return (array)json_decode(Storage::get($this->json_file_name));
+            return (array)json_decode(Storage::get($this->json_file_name), true);
         } else {
             if (Storage::put($this->json_file_name, '[]')) {
                 return [];

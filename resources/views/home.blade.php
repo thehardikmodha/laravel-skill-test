@@ -26,7 +26,8 @@
                     <form id="product-form">
                         <div class="mb-3">
                             <label for="product-name" class="visually-hidden">Product Name</label>
-                            <input type="text" class="form-control" id="product-name" placeholder="Product Name" name="name"
+                            <input type="text" class="form-control" id="product-name" placeholder="Product Name"
+                                   name="name"
                                    autofocus>
                         </div>
                         <div class="mb-3">
@@ -46,6 +47,25 @@
                 </div>
             </div>
 
+            <div class="card mt-2">
+                <div class="card-header">
+                    Product List
+                </div>
+                <table id="product-table" class="card-body table table-bordered table-hover m-0">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Product Quantity</th>
+                        <th scope="col">Product Price</th>
+                        <th scope="col">Total Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 </div>
@@ -59,19 +79,57 @@
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
 
+    function fetchProducts() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '{{ route('products-list') }}',
+            method: 'GET',
+            success: function (data) {
+                $('#product-table tbody').empty();
+                if (data.length > 0)
+                {
+                    for (let i = 0; i < data.length; i++) {
+                        const id = data[i].id;
+                        const name = data[i].name;
+                        const quantity = data[i].quantity;
+                        const price = data[i].price;
+                        $("#product-table tbody").append('<tr>' +
+                            '<th scope="row">' + id + '</th>' +
+                            '<td>' + name + '</td>' +
+                            '<td>' + quantity + '</td>' +
+                            '<td>$' + price + '</td>' +
+                            '<td>$' + (parseInt(price) * parseInt(quantity)) + '</td>' +
+                            '</tr>');
+                    }
+                } else {
+                    $("#product-table tbody").append('<tr><td class="text-center" colspan="5">No record found.</td></tr>');
+                }
+            }
+        })
+    }
 
     $(function () {
+        fetchProducts();
         $('#product-form').on('submit', function (e) {
             e.preventDefault();
+            const data = $(this).serialize();
+            $("#product-form input").prop("disabled", true);
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 url: '{{ route('product-store') }}',
                 method: 'POST',
-                data: $(this).serialize(),
+                data: data,
                 success: function (response) {
-                    console.log(response)
+                    $("#product-form input").prop("disabled", false);
+                    if (response.status) {
+                        fetchProducts();
+                        $("#product-form input").val('');
+                    } else
+                        alert(response.message);
                 }
             })
         })

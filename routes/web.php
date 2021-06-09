@@ -20,6 +20,7 @@ Route::group([
 ], function () {
 
     Route::get('/', [ProductController::class, 'index'])->name('products');
+    Route::get('/products-list', [ProductController::class, 'list'])->name('products-list');
     Route::post('/', [ProductController::class, 'store'])->name('product-store');
 
 });
