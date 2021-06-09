@@ -102,7 +102,7 @@
                             '</tr>');
                     }
                 } else {
-                    $("#product-table tbody").append('<tr><td class="text-center" colspan="5">No record found.</td></tr>');
+                    $("#product-table tbody").append('<tr><td class="text-center" colspan="6">No record found.</td></tr>');
                 }
             }
         })
