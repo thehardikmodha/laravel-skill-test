@@ -85,23 +85,30 @@
             success: function (data) {
                 $('#product-table tbody').empty();
                 if (data.length > 0) {
+                    let total = 0;
                     for (let i = 0; i < data.length; i++) {
                         const id = data[i].id;
                         const name = data[i].name;
                         const quantity = data[i].quantity;
                         const price = data[i].price;
+                        const total_price = (parseInt(price) * parseInt(quantity));
+                        total += total_price;
                         $("#product-table tbody").append('<tr>' +
                             '<th scope="row">' + id + '</th>' +
                             '<td>' + name + '</td>' +
                             '<td>' + quantity + '</td>' +
                             '<td>$' + price + '</td>' +
-                            '<td>$' + (parseInt(price) * parseInt(quantity)) + '</td>' +
+                            '<td>$' + total_price + '</td>' +
                             '<td>' +
                             '<a class="btn btn-primary btn-sm" href="/products/edit/' + id + '" role="button">Edit</a>' +
                             '</td>' +
                             '</tr>');
-                        $('#product-name').focus();
+                        if ((data.length - 1) === i)
+                        {
+                            $("#product-table tbody").append('<tr><td class="text-end" colspan="6">Total: $' + total + '</td></tr>');
+                        }
                     }
+                    $('#product-name').focus();
                 } else {
                     $("#product-table tbody").append('<tr><td class="text-center" colspan="6">No record found.</td></tr>');
                 }
