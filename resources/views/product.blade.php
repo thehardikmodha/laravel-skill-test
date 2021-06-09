@@ -100,6 +100,7 @@
                             '<a class="btn btn-primary btn-sm" href="/products/edit/' + id + '" role="button">Edit</a>' +
                             '</td>' +
                             '</tr>');
+                        $('#product-name').focus();
                     }
                 } else {
                     $("#product-table tbody").append('<tr><td class="text-center" colspan="6">No record found.</td></tr>');
